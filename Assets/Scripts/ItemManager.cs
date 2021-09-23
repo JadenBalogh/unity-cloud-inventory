@@ -10,7 +10,7 @@ public class ItemManager : MonoBehaviour
     public delegate void GetItemsCallback(Item[] items);
     private delegate void WebRequestCallback(string json);
 
-    private const string SERVER_URL = "";
+    private const string SERVER_URL = "https://unity-cloud-inventory-server.herokuapp.com";
 
     private void Awake()
     {
@@ -25,7 +25,7 @@ public class ItemManager : MonoBehaviour
 
     public static void GetItems(GetItemsCallback callback)
     {
-        instance.Get("http://localhost:3000/get-items", (json) =>
+        instance.Get($"{SERVER_URL}/get-items", (json) =>
         {
             RawItem[] rawItems = JsonUtility.FromJson<RawItems>(json).items;
             Item[] items = new Item[rawItems.Length];
