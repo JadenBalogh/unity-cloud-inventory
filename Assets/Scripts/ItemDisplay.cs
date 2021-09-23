@@ -26,12 +26,10 @@ public class ItemDisplay : MonoBehaviour
 
     public void AddItem()
     {
-        if (usageCooldownActive) return;
         string itemName = itemNameInput.text;
         if (itemName == "") return;
         itemNameInput.text = "";
         ItemManager.AddItem(itemName, () => RefreshItems());
-        StartCoroutine(UsageCooldown());
     }
 
     private void UpdateDisplay(Item[] items)
