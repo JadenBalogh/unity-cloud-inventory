@@ -20,7 +20,7 @@ public class ItemDisplay : MonoBehaviour
     public void RefreshItems()
     {
         if (usageCooldownActive) return;
-        ItemManager.GetItems(UpdateDisplay);
+        ItemManager.LoadItems(0, UpdateDisplay);
         StartCoroutine(UsageCooldown());
     }
 
@@ -29,15 +29,17 @@ public class ItemDisplay : MonoBehaviour
         string itemName = itemNameInput.text;
         if (itemName == "") return;
         itemNameInput.text = "";
-        ItemManager.AddItem(itemName, () => RefreshItems());
+
+        BaseItem item = new BaseItem(0, itemName);
+        ItemManager.SaveItem(0, item, () => RefreshItems());
     }
 
-    private void UpdateDisplay(Item[] items)
+    private void UpdateDisplay(BaseItem[] items)
     {
         string output = "";
-        foreach (Item item in items)
+        foreach (BaseItem item in items)
         {
-            output += $"{item.name} (id = {item.id})\n";
+            output += $"{item.Name} (id = {item.IID})\n";
         }
         itemsTextbox.text = output;
     }

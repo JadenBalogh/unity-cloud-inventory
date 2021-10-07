@@ -1,11 +1,19 @@
-public class Item
+public class Item : BaseItem
 {
-    public int id;
-    public string name;
+    public int Price { get; set; }
 
-    public Item(int id, string name)
+    public Item(int iid, string name, int price) : base(iid, name)
     {
-        this.id = id;
-        this.name = name;
+        Price = price;
+    }
+
+    public override void Serialize()
+    {
+        base.Serialize();
+    }
+
+    public override void Deserialize()
+    {
+        base.Deserialize();
     }
 }
