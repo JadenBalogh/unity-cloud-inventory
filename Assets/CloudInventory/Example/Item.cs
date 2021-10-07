@@ -4,11 +4,6 @@ namespace CloudInventory.Example
     {
         public int Price { get; set; }
 
-        public Item(int iid, string name, int price) : base(iid, name)
-        {
-            Price = price;
-        }
-
         public override void Serialize(ItemData output)
         {
             output["price"] = Price;

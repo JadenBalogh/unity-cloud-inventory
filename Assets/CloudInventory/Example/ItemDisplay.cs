@@ -21,7 +21,7 @@ namespace CloudInventory.Example
         public void RefreshItems()
         {
             if (usageCooldownActive) return;
-            ItemManager.LoadItems(0, UpdateDisplay);
+            ItemManager.LoadItems<Item>(0, UpdateDisplay);
             StartCoroutine(UsageCooldown());
         }
 
@@ -31,16 +31,19 @@ namespace CloudInventory.Example
             if (itemName == "") return;
             itemNameInput.text = "";
 
-            Item item = new Item(0, itemName, Random.Range(1, 9));
+            Item item = new Item();
+            item.IID = 0;
+            item.Name = itemName;
+            item.Price = Random.Range(1, 9);
             ItemManager.SaveItem(0, item, () => RefreshItems());
         }
 
-        private void UpdateDisplay(BaseItem[] items)
+        private void UpdateDisplay(Item[] items)
         {
             string output = "";
-            foreach (BaseItem item in items)
+            foreach (Item item in items)
             {
-                output += $"{item.Name} (id = {item.IID})\n";
+                output += $"{item.Name} (id = {item.IID}) - ${item.Price}\n";
             }
             itemsTextbox.text = output;
         }
