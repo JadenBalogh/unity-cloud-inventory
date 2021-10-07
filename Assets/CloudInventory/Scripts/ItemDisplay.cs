@@ -30,7 +30,7 @@ public class ItemDisplay : MonoBehaviour
         if (itemName == "") return;
         itemNameInput.text = "";
 
-        BaseItem item = new BaseItem(0, itemName);
+        Item item = new Item(0, itemName, Random.Range(1, 9));
         ItemManager.SaveItem(0, item, () => RefreshItems());
     }
 

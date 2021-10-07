@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class Item : BaseItem
 {
     public int Price { get; set; }
@@ -7,13 +9,13 @@ public class Item : BaseItem
         Price = price;
     }
 
-    public override void Serialize()
+    public override void Serialize(ItemData output)
     {
-        base.Serialize();
+        output["price"] = Price;
     }
 
-    public override void Deserialize()
+    public override void Deserialize(ItemData input)
     {
-        base.Deserialize();
+        Price = (int)input["price"];
     }
 }

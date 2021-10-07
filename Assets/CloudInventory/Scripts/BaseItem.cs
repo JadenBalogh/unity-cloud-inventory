@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class BaseItem
 {
     public int IID { get; set; }
@@ -13,13 +9,7 @@ public class BaseItem
         Name = name;
     }
 
-    public virtual void Serialize()
-    {
+    public virtual void Serialize(ItemData output) { }
 
-    }
-
-    public virtual void Deserialize()
-    {
-
-    }
+    public virtual void Deserialize(ItemData input) { }
 }

@@ -2,6 +2,7 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
 
 public class ItemManager : MonoBehaviour
 {
@@ -36,6 +37,10 @@ public class ItemManager : MonoBehaviour
             {
                 RawItem raw = rawItems[i];
                 items[i] = new BaseItem(raw.id, raw.item_name);
+
+                // Deserialize custom item data
+                ItemData customData = JsonConvert.DeserializeObject<ItemData>(raw.item_data, new ItemDataConverter());
+                items[i].Deserialize(customData);
             }
             callback(items);
         });
@@ -43,11 +48,16 @@ public class ItemManager : MonoBehaviour
 
     public static void SaveItem(int playerIID, BaseItem item, SaveItemsCallback callback)
     {
-        RawItemData itemData = new RawItemData();
-        itemData.name = item.Name;
-        string body = JsonUtility.ToJson(itemData);
-        Debug.Log(body);
-        instance.Client.SaveItem(playerIID, body, (json) => callback());
+        RawItemData rawData = new RawItemData();
+        rawData.name = item.Name;
+
+        // Serialize custom item data
+        ItemData customData = new ItemData();
+        item.Serialize(customData);
+        rawData.data = JsonConvert.SerializeObject(customData);
+
+        string itemJson = JsonUtility.ToJson(rawData);
+        instance.Client.SaveItem(playerIID, itemJson, (json) => callback());
     }
 
     // TODO: SaveItems function
@@ -75,11 +85,13 @@ public class ItemManager : MonoBehaviour
     {
         public int id;
         public string item_name;
+        public string item_data;
     }
 
     [System.Serializable]
     private class RawItemData
     {
         public string name;
+        public string data;
     }
 }
