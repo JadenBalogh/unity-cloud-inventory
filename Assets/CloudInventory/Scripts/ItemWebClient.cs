@@ -12,12 +12,12 @@ public class ItemWebClient : BaseItemClient
 
     public override void LoadItems(int playerIID, ClientJsonCallback callback)
     {
-        Get($"{serverURL}/get-items", (json) => callback(json));
+        Get($"{serverURL}/get-items?playerId={playerIID}", (json) => callback(json));
     }
 
     public override void SaveItem(int playerIID, string itemJson, ClientJsonCallback callback)
     {
-        Post($"{serverURL}/add-item", itemJson, (json) => callback(json));
+        Post($"{serverURL}/add-item?playerId={playerIID}", itemJson, (json) => callback(json));
     }
 
     private void Get(string uri, WebRequestCallback callback = null) => StartCoroutine(GetAsync(uri, callback));
