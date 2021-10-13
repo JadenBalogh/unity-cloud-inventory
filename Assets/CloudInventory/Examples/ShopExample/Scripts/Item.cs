@@ -1,4 +1,8 @@
-namespace CloudInventory.Examples.ItemListExample
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace CloudInventory.Examples.ShopExample
 {
     public class Item : BaseItem
     {

@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CloudInventory.Example
+namespace CloudInventory.Examples.ItemListExample
 {
     public class ItemDisplay : MonoBehaviour
     {
