@@ -8,6 +8,13 @@ namespace CloudInventory.Examples.ShopExample
     {
         public int Price { get; set; }
 
+        public Item() : base() { }
+
+        public Item(int playerIID, string name, int type, int price) : base(playerIID, name, type)
+        {
+            Price = price;
+        }
+
         public override void Serialize(ItemData output)
         {
             output["price"] = Price;

@@ -10,7 +10,7 @@ namespace CloudInventory
 
         public delegate void GetItemCallback<T>(T item);
         public delegate void GetItemsCallback<T>(T[] items);
-        public delegate void CreateItemCallback();
+        public delegate void ModifyItemCallback();
 
         public BaseItemClient Client { get; private set; }
 
@@ -24,7 +24,7 @@ namespace CloudInventory
             }
             instance = this;
 
-            // Requires an BaseItemClient component
+            // Require a BaseItemClient component
             InitializeClient();
         }
 
@@ -32,15 +32,15 @@ namespace CloudInventory
         /// Standard method to load an item from the database by ID.
         /// BaseItem is sent to the callback upon retrieval.
         ///</summary>
-        public static void GetItem(int playerIID, GetItemCallback<BaseItem> callback) => GetItem<BaseItem>(playerIID, callback);
+        public static void GetItem(int itemIID, GetItemCallback<BaseItem> callback) => GetItem<BaseItem>(itemIID, callback);
 
         ///<summary>
         /// Generic method to load an item from the database by ID.
         /// BaseItem of specified type is sent to the callback upon retrieval.
         ///</summary>
-        public static void GetItem<T>(int playerIID, GetItemCallback<T> callback) where T : BaseItem
+        public static void GetItem<T>(int itemIID, GetItemCallback<T> callback) where T : BaseItem
         {
-            instance.Client.GetItem(playerIID, (json) => callback(instance.DeserializeItem<T>(json)));
+            instance.Client.GetItem(itemIID, (json) => callback(instance.DeserializeItem<T>(json)));
         }
 
         ///<summary>
@@ -74,22 +74,39 @@ namespace CloudInventory
         }
 
         ///<summary>
-        /// Standard method to create an item in the database for a given player.
-        /// Upon successful save, callback is invoked.
+        /// Standard method to create an item in the database.
+        /// Upon successful creation, callback is invoked.
         ///</summary>
-        public static void CreateItem(int playerIID, BaseItem item, CreateItemCallback callback)
+        public static void CreateItem(BaseItem item, ModifyItemCallback callback)
         {
-            RawItemData rawData = new RawItemData();
-            rawData.name = item.Name;
-            rawData.type = item.Type;
+            instance.Client.CreateItem(instance.SerializeItem(item), (json) => callback());
+        }
 
-            // Serialize custom item data
-            ItemData customData = new ItemData();
-            item.Serialize(customData);
-            rawData.data = JsonConvert.SerializeObject(customData);
+        ///<summary>
+        /// Standard method to update an item in the database.
+        /// Upon successful update, callback is invoked.
+        ///</summary>
+        public static void UpdateItem(BaseItem item, ModifyItemCallback callback)
+        {
+            instance.Client.UpdateItem(item.IID, instance.SerializeItem(item), (json) => callback());
+        }
 
-            string itemJson = JsonUtility.ToJson(rawData);
-            instance.Client.CreateItem(playerIID, itemJson, (json) => callback());
+        ///<summary>
+        /// Standard method to delete an item from the database by id.
+        /// Upon successful removal, callback is invoked.
+        ///</summary>
+        public static void DeleteItem(int itemIID, ModifyItemCallback callback)
+        {
+            instance.Client.DeleteItem(itemIID, (json) => callback());
+        }
+
+        ///<summary>
+        /// Standard method to trade an item in the database by id to a given player.
+        /// Upon successful trade, callback is invoked.
+        ///</summary>
+        public static void TradeItem(int itemIID, int playerIID, ModifyItemCallback callback)
+        {
+            instance.Client.TradeItem(itemIID, playerIID, (json) => callback());
         }
 
         private void InitializeClient()
@@ -102,6 +119,23 @@ namespace CloudInventory
             {
                 throw new MissingComponentException("ItemManager is missing a Client-type component!");
             }
+        }
+
+        private string SerializeItem(BaseItem item)
+        {
+            // Create raw item container object
+            RawItemData rawData = new RawItemData();
+            rawData.playerId = item.PlayerIID;
+            rawData.name = item.Name;
+            rawData.type = item.Type;
+
+            // Serialize custom item data
+            ItemData customData = new ItemData();
+            item.Serialize(customData);
+            rawData.data = JsonConvert.SerializeObject(customData);
+
+            // Return serialized item
+            return JsonUtility.ToJson(rawData);
         }
 
         private T DeserializeItem<T>(string json) where T : BaseItem
@@ -128,6 +162,7 @@ namespace CloudInventory
             // Create instance of given item type
             T item = Activator.CreateInstance<T>();
             item.IID = raw.id;
+            item.PlayerIID = raw.player_id;
             item.Name = raw.item_name;
             item.Type = raw.item_type;
 
@@ -149,6 +184,7 @@ namespace CloudInventory
         private class RawItem
         {
             public int id;
+            public int player_id;
             public string item_name;
             public int item_type;
             public string item_data;
@@ -157,6 +193,7 @@ namespace CloudInventory
         [System.Serializable]
         private class RawItemData
         {
+            public int playerId;
             public string name;
             public int type;
             public string data;

@@ -54,8 +54,13 @@ namespace CloudInventory.Examples.ShopExample
                 GameManager.GoldSystem.AddGold(-1, item.Price);
                 GameManager.GoldSystem.SpendGold(player, item.Price);
 
-                // TODO: remove items / trade items
-                ItemManager.CreateItem(player, item, () => UpdateInventory(player));
+                // Trade the item to the current player
+                ItemManager.TradeItem(item.IID, GameManager.Player, () =>
+                {
+                    // Update shop and player
+                    UpdateInventory(-1);
+                    UpdateInventory(player);
+                });
             }
         }
     }

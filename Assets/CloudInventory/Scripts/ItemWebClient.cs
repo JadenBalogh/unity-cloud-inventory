@@ -11,9 +11,9 @@ namespace CloudInventory
 
         private delegate void WebRequestCallback(string json);
 
-        public override void GetItem(int itemID, ClientJsonCallback callback)
+        public override void GetItem(int itemIID, ClientJsonCallback callback)
         {
-            Get($"{serverURL}/get-item?itemId={itemID}", (json) => callback(json));
+            Get($"{serverURL}/get-item?itemId={itemIID}", (json) => callback(json));
         }
 
         public override void GetItems(int playerIID, ClientJsonCallback callback)
@@ -26,14 +26,24 @@ namespace CloudInventory
             Get($"{serverURL}/get-items-by-type?playerId={playerIID}&type={type}", (json) => callback(json));
         }
 
-        public override void CreateItem(int playerIID, string itemJson, ClientJsonCallback callback)
+        public override void CreateItem(string itemJson, ClientJsonCallback callback)
         {
-            Post($"{serverURL}/add-item?playerId={playerIID}", itemJson, (json) => callback(json));
+            Post($"{serverURL}/add-item", itemJson, (json) => callback(json));
         }
 
-        public override void SaveItem(int playerIID, string itemJson, ClientJsonCallback callback)
+        public override void UpdateItem(int itemIID, string itemJson, ClientJsonCallback callback)
         {
-            Post($"{serverURL}/add-item?playerId={playerIID}", itemJson, (json) => callback(json));
+            Post($"{serverURL}/update-item?itemId={itemIID}", itemJson, (json) => callback(json));
+        }
+
+        public override void DeleteItem(int itemIID, ClientJsonCallback callback)
+        {
+            Get($"{serverURL}/remove-item?itemId={itemIID}", (json) => callback(json));
+        }
+
+        public override void TradeItem(int itemIID, int playerIID, ClientJsonCallback callback)
+        {
+            Get($"{serverURL}/trade-item?itemId={itemIID}&playerId={playerIID}", (json) => callback(json));
         }
 
         private void Get(string uri, WebRequestCallback callback = null) => StartCoroutine(GetAsync(uri, callback));
