@@ -22,6 +22,7 @@ namespace CloudInventory.Examples.ShopExample
             // Create new item
             Item item = new Item();
             item.Name = prefix + " " + name;
+            item.Type = (int)ItemType.Item;
             item.Price = price;
 
             // Add item to database

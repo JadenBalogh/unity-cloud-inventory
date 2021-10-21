@@ -51,6 +51,7 @@ namespace CloudInventory
                     T item = Activator.CreateInstance<T>();
                     item.IID = raw.id;
                     item.Name = raw.item_name;
+                    item.Type = raw.item_type;
 
                     // Deserialize custom item data
                     ItemData customData = JsonConvert.DeserializeObject<ItemData>(raw.item_data, new ItemDataConverter());
@@ -71,6 +72,7 @@ namespace CloudInventory
         {
             RawItemData rawData = new RawItemData();
             rawData.name = item.Name;
+            rawData.type = item.Type;
 
             // Serialize custom item data
             ItemData customData = new ItemData();
@@ -106,6 +108,7 @@ namespace CloudInventory
         {
             public int id;
             public string item_name;
+            public int item_type;
             public string item_data;
         }
 
@@ -113,6 +116,7 @@ namespace CloudInventory
         private class RawItemData
         {
             public string name;
+            public int type;
             public string data;
         }
     }
