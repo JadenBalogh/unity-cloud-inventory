@@ -14,6 +14,9 @@ namespace CloudInventory.Examples.ShopExample
         private int player = 0;
         public static int Player { get => instance.player; }
 
+        private const int SHOP_IID = -1;
+        public static int Shop { get => SHOP_IID; }
+
         private UnityEvent<int> onPlayerChanged = new UnityEvent<int>();
         public static UnityEvent<int> OnPlayerChanged { get => instance.onPlayerChanged; }
 

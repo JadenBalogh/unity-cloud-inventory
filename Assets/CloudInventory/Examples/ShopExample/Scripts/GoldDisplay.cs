@@ -19,7 +19,7 @@ namespace CloudInventory.Examples.ShopExample
             {
                 GameManager.OnPlayerChanged.AddListener(UpdatePlayer);
             }
-            UpdatePlayer(isShop ? -1 : GameManager.Player);
+            UpdatePlayer(isShop ? GameManager.Shop : GameManager.Player);
         }
 
         public void UpdateDisplay(int gold)

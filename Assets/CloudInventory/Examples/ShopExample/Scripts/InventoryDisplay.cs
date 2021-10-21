@@ -24,16 +24,25 @@ namespace CloudInventory.Examples.ShopExample
             {
                 GameManager.OnPlayerChanged.AddListener(UpdatePlayer);
             }
-            UpdatePlayer(isShop ? -1 : GameManager.Player);
+            UpdatePlayer(isShop ? GameManager.Shop : GameManager.Player);
         }
 
         public void BuySelected()
         {
             GameManager.InventorySystem.BuyItem(GameManager.Player, selectedDisplay.Item);
+            RefreshSelection();
+        }
 
-            // Re-select the current item
-            Item item = selectedDisplay != null ? selectedDisplay.Item : null;
-            onSelectionChanged.Invoke(item);
+        public void SellSelected()
+        {
+            GameManager.InventorySystem.SellItem(GameManager.Player, selectedDisplay.Item);
+            RefreshSelection();
+        }
+
+        public void DeleteSelected()
+        {
+            GameManager.InventorySystem.DeleteItem(GameManager.Player, selectedDisplay.Item);
+            RefreshSelection();
         }
 
         private void UpdateDisplay(Item[] items)
@@ -73,7 +82,11 @@ namespace CloudInventory.Examples.ShopExample
             {
                 selectedDisplay.SetSelected(true);
             }
+            RefreshSelection();
+        }
 
+        private void RefreshSelection()
+        {
             // Send selection changed event
             Item item = selectedDisplay != null ? selectedDisplay.Item : null;
             onSelectionChanged.Invoke(item);

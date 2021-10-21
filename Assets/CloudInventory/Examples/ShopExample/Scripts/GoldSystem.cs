@@ -24,7 +24,7 @@ namespace CloudInventory.Examples.ShopExample
                 // Initialize events
                 isGoldInitialized.Add(player, false);
                 goldChangedEvents.Add(player, new UnityEvent<int>());
-                int startingGold = player == -1 ? shopStartingGold : playerStartingGold;
+                int startingGold = player == GameManager.Shop ? shopStartingGold : playerStartingGold;
 
                 // Fetch gold from DB or create starting gold
                 ItemManager.GetItems<Gold>(player, (int)ItemType.Currency, (items) =>

@@ -25,7 +25,7 @@ namespace CloudInventory.Examples.ShopExample
             GameManager.OnPlayerChanged.AddListener(UpdateInventory);
 
             // Initialize shop
-            UpdateInventory(-1);
+            UpdateInventory(GameManager.Shop);
 
             // Initialize current player
             UpdateInventory(GameManager.Player);
@@ -51,17 +51,44 @@ namespace CloudInventory.Examples.ShopExample
             if (GameManager.GoldSystem.CanAfford(player, item.Price))
             {
                 // Update gold amounts
-                GameManager.GoldSystem.AddGold(-1, item.Price);
+                GameManager.GoldSystem.AddGold(GameManager.Shop, item.Price);
                 GameManager.GoldSystem.SpendGold(player, item.Price);
 
                 // Trade the item to the current player
-                ItemManager.TradeItem(item.IID, GameManager.Player, () =>
+                ItemManager.TradeItem(item.IID, player, () =>
                 {
                     // Update shop and player
-                    UpdateInventory(-1);
+                    UpdateInventory(GameManager.Shop);
                     UpdateInventory(player);
                 });
             }
+        }
+
+        public void SellItem(int player, Item item)
+        {
+            if (GameManager.GoldSystem.CanAfford(GameManager.Shop, item.Price))
+            {
+                // Update gold amounts
+                GameManager.GoldSystem.AddGold(player, item.Price);
+                GameManager.GoldSystem.SpendGold(GameManager.Shop, item.Price);
+
+                // Trade the item to the shop
+                ItemManager.TradeItem(item.IID, GameManager.Shop, () =>
+                {
+                    // Update shop and player
+                    UpdateInventory(GameManager.Shop);
+                    UpdateInventory(player);
+                });
+            }
+        }
+
+        public void DeleteItem(int player, Item item)
+        {
+            ItemManager.DeleteItem(item.IID, () =>
+            {
+                UpdateInventory(GameManager.Shop);
+                UpdateInventory(player);
+            });
         }
     }
 }
