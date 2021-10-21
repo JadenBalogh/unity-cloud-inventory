@@ -9,6 +9,8 @@ namespace CloudInventory.Examples.ShopExample
     {
         [SerializeField] private int playerStartingGold = 25;
         [SerializeField] private int shopStartingGold = 25;
+        [SerializeField] private int minQuestGold = 5;
+        [SerializeField] private int maxQuestGold = 15;
 
         private Dictionary<int, bool> isGoldInitialized = new Dictionary<int, bool>();
         private Dictionary<int, Gold> goldAmounts = new Dictionary<int, Gold>();
@@ -83,6 +85,12 @@ namespace CloudInventory.Examples.ShopExample
             goldAmounts[player].Amount += amount;
             goldChangedEvents[player].Invoke(goldAmounts[player].Amount);
             ItemManager.UpdateItem(goldAmounts[player]);
+        }
+
+        public void PlayQuest()
+        {
+            // a.k.a. - give the current player some gold
+            AddGold(GameManager.Player, Random.Range(minQuestGold, maxQuestGold));
         }
 
         public int GetGold(int player)
