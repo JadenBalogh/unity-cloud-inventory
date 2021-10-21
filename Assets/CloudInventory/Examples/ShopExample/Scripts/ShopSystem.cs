@@ -26,7 +26,7 @@ namespace CloudInventory.Examples.ShopExample
             item.Price = price;
 
             // Add item to database
-            ItemManager.SaveItem(-1, item, () => GameManager.InventorySystem.UpdateInventory(-1));
+            ItemManager.CreateItem(-1, item, () => GameManager.InventorySystem.UpdateInventory(-1));
         }
     }
 }

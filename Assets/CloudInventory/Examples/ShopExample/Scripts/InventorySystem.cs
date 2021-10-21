@@ -43,7 +43,7 @@ namespace CloudInventory.Examples.ShopExample
 
         public void UpdateInventory(int player)
         {
-            ItemManager.LoadItems<Item>(player, (items) => itemsChangedEvents[player].Invoke(items));
+            ItemManager.GetItems<Item>(player, (items) => itemsChangedEvents[player].Invoke(items));
         }
 
         public void BuyItem(int player, Item item)
@@ -55,7 +55,7 @@ namespace CloudInventory.Examples.ShopExample
                 GameManager.GoldSystem.SpendGold(player, item.Price);
 
                 // TODO: remove items / trade items
-                ItemManager.SaveItem(player, item, () => UpdateInventory(player));
+                ItemManager.CreateItem(player, item, () => UpdateInventory(player));
             }
         }
     }

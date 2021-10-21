@@ -11,9 +11,24 @@ namespace CloudInventory
 
         private delegate void WebRequestCallback(string json);
 
-        public override void LoadItems(int playerIID, ClientJsonCallback callback)
+        public override void GetItem(int itemID, ClientJsonCallback callback)
+        {
+            Get($"{serverURL}/get-item?itemId={itemID}", (json) => callback(json));
+        }
+
+        public override void GetItems(int playerIID, ClientJsonCallback callback)
         {
             Get($"{serverURL}/get-items?playerId={playerIID}", (json) => callback(json));
+        }
+
+        public override void GetItemsByType(int playerIID, int type, ClientJsonCallback callback)
+        {
+            Get($"{serverURL}/get-items-by-type?playerId={playerIID}&type={type}", (json) => callback(json));
+        }
+
+        public override void CreateItem(int playerIID, string itemJson, ClientJsonCallback callback)
+        {
+            Post($"{serverURL}/add-item?playerId={playerIID}", itemJson, (json) => callback(json));
         }
 
         public override void SaveItem(int playerIID, string itemJson, ClientJsonCallback callback)

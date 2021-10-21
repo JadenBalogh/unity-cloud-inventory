@@ -21,7 +21,7 @@ namespace CloudInventory.Examples.ItemListExample
         public void RefreshItems()
         {
             if (usageCooldownActive) return;
-            ItemManager.LoadItems<Item>(0, UpdateDisplay);
+            ItemManager.GetItems<Item>(0, 0, UpdateDisplay);
             StartCoroutine(UsageCooldown());
         }
 
@@ -35,7 +35,7 @@ namespace CloudInventory.Examples.ItemListExample
             item.IID = 0;
             item.Name = itemName;
             item.Price = Random.Range(1, 9);
-            ItemManager.SaveItem(0, item, () => RefreshItems());
+            ItemManager.CreateItem(0, item, () => RefreshItems());
         }
 
         private void UpdateDisplay(Item[] items)

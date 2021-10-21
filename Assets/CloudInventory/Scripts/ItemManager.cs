@@ -8,8 +8,9 @@ namespace CloudInventory
     {
         public static ItemManager instance;
 
-        public delegate void LoadItemsCallback<T>(T[] items);
-        public delegate void SaveItemsCallback();
+        public delegate void GetItemCallback<T>(T item);
+        public delegate void GetItemsCallback<T>(T[] items);
+        public delegate void CreateItemCallback();
 
         public BaseItemClient Client { get; private set; }
 
@@ -28,47 +29,55 @@ namespace CloudInventory
         }
 
         ///<summary>
+        /// Standard method to load an item from the database by ID.
+        /// BaseItem is sent to the callback upon retrieval.
+        ///</summary>
+        public static void GetItem(int playerIID, GetItemCallback<BaseItem> callback) => GetItem<BaseItem>(playerIID, callback);
+
+        ///<summary>
+        /// Generic method to load an item from the database by ID.
+        /// BaseItem of specified type is sent to the callback upon retrieval.
+        ///</summary>
+        public static void GetItem<T>(int playerIID, GetItemCallback<T> callback) where T : BaseItem
+        {
+            instance.Client.GetItem(playerIID, (json) => callback(instance.DeserializeItem<T>(json)));
+        }
+
+        ///<summary>
         /// Standard method to load all items from the database for a given player.
         /// Array of BaseItems is sent to the callback upon retrieval.
         ///</summary>
-        public static void LoadItems(int playerIID, LoadItemsCallback<BaseItem> callback) => LoadItems<BaseItem>(playerIID, callback);
+        public static void GetItems(int playerIID, GetItemsCallback<BaseItem> callback) => GetItems<BaseItem>(playerIID, callback);
 
         ///<summary>
         /// Generic method to load all items from the database for a given player.
         /// Array of given BaseItem type is sent to the callback upon retrieval.
         ///</summary>
-        public static void LoadItems<T>(int playerIID, LoadItemsCallback<T> callback) where T : BaseItem
+        public static void GetItems<T>(int playerIID, GetItemsCallback<T> callback) where T : BaseItem
         {
-            instance.Client.LoadItems(playerIID, (json) =>
-            {
-                RawItem[] rawItems = JsonUtility.FromJson<RawItems>(json).items;
-                T[] items = new T[rawItems.Length];
-                for (int i = 0; i < rawItems.Length; i++)
-                {
-                    RawItem raw = rawItems[i];
-
-                    // Create instance of given item type
-                    T item = Activator.CreateInstance<T>();
-                    item.IID = raw.id;
-                    item.Name = raw.item_name;
-                    item.Type = raw.item_type;
-
-                    // Deserialize custom item data
-                    ItemData customData = JsonConvert.DeserializeObject<ItemData>(raw.item_data, new ItemDataConverter());
-                    item.Deserialize(customData);
-
-                    // Add loaded item to list
-                    items[i] = item;
-                }
-                callback(items);
-            });
+            instance.Client.GetItems(playerIID, (json) => callback(instance.DeserializeItems<T>(json)));
         }
 
         ///<summary>
-        /// Standard method to save an item to the database for a given player.
+        /// Standard method to load all items from the database for a given player with a given type.
+        /// Array of BaseItems is sent to the callback upon retrieval.
+        ///</summary>
+        public static void GetItems(int playerIID, int type, GetItemsCallback<BaseItem> callback) => GetItems<BaseItem>(playerIID, type, callback);
+
+        ///<summary>
+        /// Generic method to load all items from the database for a given player with a given type.
+        /// Array of given BaseItem type is sent to the callback upon retrieval.
+        ///</summary>
+        public static void GetItems<T>(int playerIID, int type, GetItemsCallback<T> callback) where T : BaseItem
+        {
+            instance.Client.GetItemsByType(playerIID, type, (json) => callback(instance.DeserializeItems<T>(json)));
+        }
+
+        ///<summary>
+        /// Standard method to create an item in the database for a given player.
         /// Upon successful save, callback is invoked.
         ///</summary>
-        public static void SaveItem(int playerIID, BaseItem item, SaveItemsCallback callback)
+        public static void CreateItem(int playerIID, BaseItem item, CreateItemCallback callback)
         {
             RawItemData rawData = new RawItemData();
             rawData.name = item.Name;
@@ -80,10 +89,8 @@ namespace CloudInventory
             rawData.data = JsonConvert.SerializeObject(customData);
 
             string itemJson = JsonUtility.ToJson(rawData);
-            instance.Client.SaveItem(playerIID, itemJson, (json) => callback());
+            instance.Client.CreateItem(playerIID, itemJson, (json) => callback());
         }
-
-        // TODO: SaveItems function
 
         private void InitializeClient()
         {
@@ -95,6 +102,41 @@ namespace CloudInventory
             {
                 throw new MissingComponentException("ItemManager is missing a Client-type component!");
             }
+        }
+
+        private T DeserializeItem<T>(string json) where T : BaseItem
+        {
+            RawItem rawItem = JsonUtility.FromJson<RawItem>(json);
+            return CreateItemInstance<T>(rawItem);
+        }
+
+        private T[] DeserializeItems<T>(string json) where T : BaseItem
+        {
+            RawItem[] rawItems = JsonUtility.FromJson<RawItems>(json).items;
+            T[] items = new T[rawItems.Length];
+            for (int i = 0; i < rawItems.Length; i++)
+            {
+                RawItem rawItem = rawItems[i];
+                T item = CreateItemInstance<T>(rawItem);
+                items[i] = item;
+            }
+            return items;
+        }
+
+        private T CreateItemInstance<T>(RawItem raw) where T : BaseItem
+        {
+            // Create instance of given item type
+            T item = Activator.CreateInstance<T>();
+            item.IID = raw.id;
+            item.Name = raw.item_name;
+            item.Type = raw.item_type;
+
+            // Deserialize custom item data
+            ItemData customData = JsonConvert.DeserializeObject<ItemData>(raw.item_data, new ItemDataConverter());
+            item.Deserialize(customData);
+
+            // Return loaded item
+            return item;
         }
 
         [System.Serializable]
