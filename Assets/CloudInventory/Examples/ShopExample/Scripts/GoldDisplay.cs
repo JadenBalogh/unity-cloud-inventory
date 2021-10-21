@@ -31,7 +31,10 @@ namespace CloudInventory.Examples.ShopExample
         {
             GameManager.GoldSystem.RemoveGoldListener(this.player, UpdateDisplay);
             GameManager.GoldSystem.AddGoldListener(player, UpdateDisplay);
-            UpdateDisplay(GameManager.GoldSystem.GetGold(player));
+            if (GameManager.GoldSystem.IsGoldInitialized(player))
+            {
+                UpdateDisplay(GameManager.GoldSystem.GetGold(player));
+            }
             this.player = player;
         }
     }

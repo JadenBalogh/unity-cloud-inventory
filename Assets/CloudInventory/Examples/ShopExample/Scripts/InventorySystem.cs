@@ -43,7 +43,7 @@ namespace CloudInventory.Examples.ShopExample
 
         public void UpdateInventory(int player)
         {
-            ItemManager.GetItems<Item>(player, (items) => itemsChangedEvents[player].Invoke(items));
+            ItemManager.GetItems<Item>(player, (int)ItemType.Item, (items) => itemsChangedEvents[player].Invoke(items));
         }
 
         public void BuyItem(int player, Item item)

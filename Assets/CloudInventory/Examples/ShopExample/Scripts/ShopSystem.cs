@@ -20,7 +20,7 @@ namespace CloudInventory.Examples.ShopExample
             int price = Random.Range(minRandomItemPrice, maxRandomItemPrice + 1);
 
             // Create new item
-            Item item = new Item(-1, prefix + " " + name, (int)ItemType.Item, price);
+            Item item = new Item(-1, prefix + " " + name, price);
 
             // Add item to database
             ItemManager.CreateItem(item, () => GameManager.InventorySystem.UpdateInventory(-1));

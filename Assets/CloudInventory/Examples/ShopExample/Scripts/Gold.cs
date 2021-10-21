@@ -4,25 +4,25 @@ using UnityEngine;
 
 namespace CloudInventory.Examples.ShopExample
 {
-    public class Item : BaseItem
+    public class Gold : BaseItem
     {
-        public int Price { get; set; }
+        public int Amount { get; set; }
 
-        public Item() : base() { }
+        public Gold() : base() { }
 
-        public Item(int playerIID, string name, int price) : base(playerIID, name, (int)ItemType.Item)
+        public Gold(int playerIID, int amount) : base(playerIID, "Gold", (int)ItemType.Currency)
         {
-            Price = price;
+            Amount = amount;
         }
 
         public override void Serialize(ItemData output)
         {
-            output["price"] = Price;
+            output["amount"] = Amount;
         }
 
         public override void Deserialize(ItemData input)
         {
-            Price = (int)input["price"];
+            Amount = (int)input["amount"];
         }
     }
 }

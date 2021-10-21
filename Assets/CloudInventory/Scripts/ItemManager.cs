@@ -75,7 +75,18 @@ namespace CloudInventory
 
         ///<summary>
         /// Standard method to create an item in the database.
-        /// Upon successful creation, callback is invoked.
+        ///</summary>
+        public static void CreateItem(BaseItem item) => CreateItem(item, () => { });
+
+        ///<summary>
+        /// Standard method to create an item in the database.
+        /// BaseItem is sent to the callback upon creation.
+        ///</summary>
+        public static void CreateItem(BaseItem item, GetItemCallback<BaseItem> callback) => CreateItem<BaseItem>(item, callback);
+
+        ///<summary>
+        /// Standard method to create an item in the database.
+        /// Callback is invoked upon completion.
         ///</summary>
         public static void CreateItem(BaseItem item, ModifyItemCallback callback)
         {
@@ -83,13 +94,47 @@ namespace CloudInventory
         }
 
         ///<summary>
+        /// Generic method to create an item in the database.
+        /// BaseItem of specified type is sent to the callback upon creation.
+        ///</summary>
+        public static void CreateItem<T>(BaseItem item, GetItemCallback<T> callback) where T : BaseItem
+        {
+            instance.Client.CreateItem(instance.SerializeItem(item), (json) => callback(instance.DeserializeItem<T>(json)));
+        }
+
+        ///<summary>
         /// Standard method to update an item in the database.
-        /// Upon successful update, callback is invoked.
+        ///</summary>
+        public static void UpdateItem(BaseItem item) => UpdateItem(item, () => { });
+
+        ///<summary>
+        /// Standard method to update an item in the database.
+        /// Updated BaseItem is sent to the callback once complete.
+        ///</summary>
+        public static void UpdateItem(BaseItem item, GetItemCallback<BaseItem> callback) => UpdateItem<BaseItem>(item, callback);
+
+        ///<summary>
+        /// Standard method to update an item in the database.
+        /// Callback is invoked upon completion.
         ///</summary>
         public static void UpdateItem(BaseItem item, ModifyItemCallback callback)
         {
             instance.Client.UpdateItem(item.IID, instance.SerializeItem(item), (json) => callback());
         }
+
+        ///<summary>
+        /// Generic method to update an item in the database.
+        /// Updated BaseItem of specified type is sent to the callback once complete.
+        ///</summary>
+        public static void UpdateItem<T>(BaseItem item, GetItemCallback<T> callback) where T : BaseItem
+        {
+            instance.Client.UpdateItem(item.IID, instance.SerializeItem(item), (json) => callback(instance.DeserializeItem<T>(json)));
+        }
+
+        ///<summary>
+        /// Standard method to delete an item from the database by id.
+        ///</summary>
+        public static void DeleteItem(int itemIID) => DeleteItem(itemIID, () => { });
 
         ///<summary>
         /// Standard method to delete an item from the database by id.
@@ -99,6 +144,11 @@ namespace CloudInventory
         {
             instance.Client.DeleteItem(itemIID, (json) => callback());
         }
+
+        ///<summary>
+        /// Standard method to trade an item in the database by id to a given player.
+        ///</summary>
+        public static void TradeItem(int itemIID, int playerIID) => TradeItem(itemIID, playerIID, () => { });
 
         ///<summary>
         /// Standard method to trade an item in the database by id to a given player.
