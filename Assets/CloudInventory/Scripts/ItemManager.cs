@@ -4,15 +4,34 @@ using Newtonsoft.Json;
 
 namespace CloudInventory
 {
+    public enum ItemClientType
+    {
+        WebClient,
+        PlayFabClient
+    }
+
     public class ItemManager : MonoBehaviour
     {
-        public static ItemManager instance;
+        private static ItemManager instance;
 
         public delegate void GetItemCallback<T>(T item);
         public delegate void GetItemsCallback<T>(T[] items);
         public delegate void ModifyItemCallback();
 
-        public BaseItemClient Client { get; private set; }
+        private BaseItemClient client;
+        public static BaseItemClient Client { get => instance.client; }
+        public static ItemClientType ClientType
+        {
+            get
+            {
+                switch (Client.GetType().ToString())
+                {
+                    case "CloudInventory.ItemWebClient": return ItemClientType.WebClient;
+                    case "CloudInventory.ItemPlayFabClient": return ItemClientType.PlayFabClient;
+                }
+                return ItemClientType.WebClient;
+            }
+        }
 
         private void Awake()
         {
@@ -29,6 +48,14 @@ namespace CloudInventory
         }
 
         ///<summary>
+        /// Returns the current item client by the given generic type.
+        ///</summary>
+        public static T GetClient<T>() where T : BaseItemClient
+        {
+            return (T)Client;
+        }
+
+        ///<summary>
         /// Standard method to load an item from the database by ID.
         /// BaseItem is sent to the callback upon retrieval.
         ///</summary>
@@ -40,7 +67,7 @@ namespace CloudInventory
         ///</summary>
         public static void GetItem<T>(int itemIID, GetItemCallback<T> callback) where T : BaseItem
         {
-            instance.Client.GetItem(itemIID, (json) => callback(instance.DeserializeItem<T>(json)));
+            Client.GetItem(itemIID, (json) => callback(instance.DeserializeItem<T>(json)));
         }
 
         ///<summary>
@@ -55,7 +82,7 @@ namespace CloudInventory
         ///</summary>
         public static void GetItems<T>(int playerIID, GetItemsCallback<T> callback) where T : BaseItem
         {
-            instance.Client.GetItems(playerIID, (json) => callback(instance.DeserializeItems<T>(json)));
+            Client.GetItems(playerIID, (json) => callback(instance.DeserializeItems<T>(json)));
         }
 
         ///<summary>
@@ -70,7 +97,7 @@ namespace CloudInventory
         ///</summary>
         public static void GetItems<T>(int playerIID, int type, GetItemsCallback<T> callback) where T : BaseItem
         {
-            instance.Client.GetItemsByType(playerIID, type, (json) => callback(instance.DeserializeItems<T>(json)));
+            Client.GetItemsByType(playerIID, type, (json) => callback(instance.DeserializeItems<T>(json)));
         }
 
         ///<summary>
@@ -90,7 +117,7 @@ namespace CloudInventory
         ///</summary>
         public static void CreateItem(BaseItem item, ModifyItemCallback callback)
         {
-            instance.Client.CreateItem(instance.SerializeItem(item), (json) => callback());
+            Client.CreateItem(instance.SerializeItem(item), (json) => callback());
         }
 
         ///<summary>
@@ -99,7 +126,7 @@ namespace CloudInventory
         ///</summary>
         public static void CreateItem<T>(BaseItem item, GetItemCallback<T> callback) where T : BaseItem
         {
-            instance.Client.CreateItem(instance.SerializeItem(item), (json) => callback(instance.DeserializeItem<T>(json)));
+            Client.CreateItem(instance.SerializeItem(item), (json) => callback(instance.DeserializeItem<T>(json)));
         }
 
         ///<summary>
@@ -119,7 +146,7 @@ namespace CloudInventory
         ///</summary>
         public static void UpdateItem(BaseItem item, ModifyItemCallback callback)
         {
-            instance.Client.UpdateItem(item.IID, instance.SerializeItem(item), (json) => callback());
+            Client.UpdateItem(item.IID, instance.SerializeItem(item), (json) => callback());
         }
 
         ///<summary>
@@ -128,7 +155,7 @@ namespace CloudInventory
         ///</summary>
         public static void UpdateItem<T>(BaseItem item, GetItemCallback<T> callback) where T : BaseItem
         {
-            instance.Client.UpdateItem(item.IID, instance.SerializeItem(item), (json) => callback(instance.DeserializeItem<T>(json)));
+            Client.UpdateItem(item.IID, instance.SerializeItem(item), (json) => callback(instance.DeserializeItem<T>(json)));
         }
 
         ///<summary>
@@ -142,7 +169,7 @@ namespace CloudInventory
         ///</summary>
         public static void DeleteItem(int itemIID, ModifyItemCallback callback)
         {
-            instance.Client.DeleteItem(itemIID, (json) => callback());
+            Client.DeleteItem(itemIID, (json) => callback());
         }
 
         ///<summary>
@@ -156,14 +183,14 @@ namespace CloudInventory
         ///</summary>
         public static void TradeItem(int itemIID, int playerIID, ModifyItemCallback callback)
         {
-            instance.Client.TradeItem(itemIID, playerIID, (json) => callback());
+            Client.TradeItem(itemIID, playerIID, (json) => callback());
         }
 
         private void InitializeClient()
         {
             if (TryGetComponent<BaseItemClient>(out BaseItemClient client))
             {
-                Client = client;
+                this.client = client;
             }
             else
             {

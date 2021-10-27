@@ -23,12 +23,16 @@ namespace CloudInventory.Examples.ShopExample
         {
             // Hook up event listeners
             GameManager.OnPlayerChanged.AddListener(UpdateInventory);
+            GameManager.OnPlayerLoaded.AddListener(() => UpdateInventory(GameManager.Shop));
 
-            // Initialize shop
-            UpdateInventory(GameManager.Shop);
+            if (ItemManager.ClientType == ItemClientType.WebClient)
+            {
+                // Initialize shop
+                UpdateInventory(GameManager.Shop);
 
-            // Initialize current player
-            UpdateInventory(GameManager.Player);
+                // Initialize current player
+                UpdateInventory(GameManager.Player);
+            }
         }
 
         public void RemoveItemsListener(int player, UnityAction<Item[]> listener)
