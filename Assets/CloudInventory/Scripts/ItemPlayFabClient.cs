@@ -20,7 +20,29 @@ namespace CloudInventory
 
         public override void GetItem(string itemIID, ClientJsonCallback callback)
         {
-            ValidateConnection(() => { });
+            ValidateConnection(() =>
+            {
+                PlayFabClientAPI.ExecuteCloudScript(new ExecuteCloudScriptRequest()
+                {
+                    FunctionName = "getItems",
+                    FunctionParameter = new { id = itemIID }
+                }, (result) =>
+                {
+                    Debug.Log("Got item! Finished calling: " + result.FunctionName);
+                    JsonObject res = (JsonObject)result.FunctionResult;
+                    List<LogStatement> logs = result.Logs;
+                    foreach (LogStatement log in logs)
+                    {
+                        Debug.Log(log.Message);
+                    }
+                    string ret = (string)res["ret"];
+                    Debug.Log(ret);
+                    callback(ret);
+                }, (err) =>
+                {
+                    Debug.Log(err.ErrorMessage);
+                });
+            });
         }
 
         public override void GetItems(string playerIID, ClientJsonCallback callback)
@@ -35,12 +57,14 @@ namespace CloudInventory
                 {
                     Debug.Log("Got items! Finished calling: " + result.FunctionName);
                     JsonObject res = (JsonObject)result.FunctionResult;
-                    Debug.Log(res.Count);
-                    // string id = (string)res["id"];
-                    // string data = (string)res["data"];
-                    // Debug.Log("Created item id: " + id);
-                    // Debug.Log("Created item data: " + data);
-                    callback("");
+                    List<LogStatement> logs = result.Logs;
+                    foreach (LogStatement log in logs)
+                    {
+                        Debug.Log(log.Message);
+                    }
+                    string ret = (string)res["ret"];
+                    Debug.Log(ret);
+                    callback(ret);
                 }, (err) =>
                 {
                     Debug.Log(err.ErrorMessage);
@@ -114,7 +138,29 @@ namespace CloudInventory
 
         public override void TradeItem(string itemIID, string playerIID, ClientJsonCallback callback)
         {
-            ValidateConnection(() => { });
+            ValidateConnection(() =>
+            {
+                PlayFabClientAPI.ExecuteCloudScript(new ExecuteCloudScriptRequest()
+                {
+                    FunctionName = "tradeItem",
+                    FunctionParameter = new { id = itemIID, playerId = playerIID }
+                }, (result) =>
+                {
+                    Debug.Log("Traded item! Finished calling: " + result.FunctionName);
+                    JsonObject res = (JsonObject)result.FunctionResult;
+                    List<LogStatement> logs = result.Logs;
+                    foreach (LogStatement log in logs)
+                    {
+                        Debug.Log(log.Message);
+                    }
+                    string ret = (string)res["ret"];
+                    Debug.Log(ret);
+                    callback(ret);
+                }, (err) =>
+                {
+                    Debug.Log(err.ErrorMessage);
+                });
+            });
         }
 
         private void ValidateConnection(PlayFabCallback callback)
