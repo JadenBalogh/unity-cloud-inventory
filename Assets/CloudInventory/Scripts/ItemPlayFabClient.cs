@@ -12,73 +12,138 @@ namespace CloudInventory
     {
         [SerializeField] private string titleId = "83DA5";
 
-        public delegate void PlayFabCallback();
+        private delegate void PlayFabCallback();
 
-        public void ConnectPlayer(string player, PlayFabCallback callback)
-        {
-            LoginWithCustomIDRequest request = new LoginWithCustomIDRequest();
-            request.TitleId = titleId;
-            request.CustomId = player;
-            request.CreateAccount = true;
-            PlayFabClientAPI.LoginWithCustomID(request, (result) =>
-            {
-                Debug.Log("Logged in player " + result.PlayFabId);
-                callback();
-            }, (err) =>
-            {
-                Debug.Log(err.ErrorMessage);
-            });
-        }
+        private bool isConnecting = false;
+        private bool isConnected = false;
 
         public override void GetItem(int itemIID, ClientJsonCallback callback)
         {
-
+            ValidateConnection(() => { });
         }
 
         public override void GetItems(int playerIID, ClientJsonCallback callback)
         {
-
+            ValidateConnection(() =>
+            {
+                PlayFabClientAPI.ExecuteCloudScript(new ExecuteCloudScriptRequest()
+                {
+                    FunctionName = "getItems",
+                    FunctionParameter = new { playerId = playerIID }
+                }, (result) =>
+                {
+                    Debug.Log("Got items! Finished calling: " + result.FunctionName);
+                    JsonObject res = (JsonObject)result.FunctionResult;
+                    Debug.Log(res.Count);
+                    // string id = (string)res["id"];
+                    // string data = (string)res["data"];
+                    // Debug.Log("Created item id: " + id);
+                    // Debug.Log("Created item data: " + data);
+                    callback("");
+                }, (err) =>
+                {
+                    Debug.Log(err.ErrorMessage);
+                });
+            });
         }
 
         public override void GetItemsByType(int playerIID, int type, ClientJsonCallback callback)
         {
-
+            ValidateConnection(() =>
+            {
+                PlayFabClientAPI.ExecuteCloudScript(new ExecuteCloudScriptRequest()
+                {
+                    FunctionName = "getItems",
+                    FunctionParameter = new { playerId = playerIID }
+                }, (result) =>
+                {
+                    Debug.Log("Got items (by type)! Finished calling: " + result.FunctionName);
+                    JsonObject res = (JsonObject)result.FunctionResult;
+                    Debug.Log(res["items"]);
+                    // string id = (string)res["id"];
+                    // string data = (string)res["data"];
+                    // Debug.Log("Created item id: " + id);
+                    // Debug.Log("Created item data: " + data);
+                    // callback("");
+                }, (err) =>
+                {
+                    Debug.Log(err.ErrorMessage);
+                });
+            });
         }
 
         public override void CreateItem(string itemJson, ClientJsonCallback callback)
         {
-            PlayFabClientAPI.ExecuteCloudScript(new ExecuteCloudScriptRequest()
+            ValidateConnection(() =>
             {
-                FunctionName = "addItem",
-                FunctionParameter = new { data = itemJson }
-            }, (result) =>
-            {
-                Debug.Log("Created item! Finished calling: " + result.FunctionName);
-                JsonObject res = (JsonObject)result.FunctionResult;
-                string id = (string)res["id"];
-                string data = (string)res["data"];
-                Debug.Log("Created item id: " + id);
-                Debug.Log("Created item data: " + data);
-                callback("");
-            }, (err) =>
-            {
-                Debug.Log(err.ErrorMessage);
+                PlayFabClientAPI.ExecuteCloudScript(new ExecuteCloudScriptRequest()
+                {
+                    FunctionName = "addItem",
+                    FunctionParameter = new { data = itemJson }
+                }, (result) =>
+                {
+                    Debug.Log("Created item! Finished calling: " + result.FunctionName);
+                    JsonObject res = (JsonObject)result.FunctionResult;
+                    string id = (string)res["id"];
+                    string data = (string)res["data"];
+                    Debug.Log("Created item id: " + id);
+                    Debug.Log("Created item data: " + data);
+                    // callback("");
+                }, (err) =>
+                {
+                    Debug.Log(err.ErrorMessage);
+                });
             });
         }
 
         public override void UpdateItem(int itemIID, string itemJson, ClientJsonCallback callback)
         {
-
+            ValidateConnection(() => { });
         }
 
         public override void DeleteItem(int itemIID, ClientJsonCallback callback)
         {
-
+            ValidateConnection(() => { });
         }
 
         public override void TradeItem(int itemIID, int playerIID, ClientJsonCallback callback)
         {
+            ValidateConnection(() => { });
+        }
 
+        private void ValidateConnection(PlayFabCallback callback)
+        {
+            if (!isConnected && !isConnecting)
+            {
+                isConnecting = true;
+                LoginWithCustomIDRequest request = new LoginWithCustomIDRequest();
+                request.TitleId = titleId;
+                request.CustomId = "ItemPlayer";
+                request.CreateAccount = true;
+                PlayFabClientAPI.LoginWithCustomID(request, (result) =>
+                {
+                    Debug.Log("Logged in player " + result.PlayFabId);
+                    isConnected = true;
+                    callback();
+                }, (err) =>
+                {
+                    Debug.Log(err.ErrorMessage);
+                });
+            }
+            else if (isConnecting)
+            {
+                StartCoroutine(WaitConnected(callback));
+            }
+            else if (isConnected)
+            {
+                callback();
+            }
+        }
+
+        private IEnumerator WaitConnected(PlayFabCallback callback)
+        {
+            yield return new WaitUntil(() => isConnected);
+            callback();
         }
     }
 }

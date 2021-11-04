@@ -20,15 +20,10 @@ namespace CloudInventory.Examples.ShopExample
         private UnityEvent<int> onPlayerChanged = new UnityEvent<int>();
         public static UnityEvent<int> OnPlayerChanged { get => instance.onPlayerChanged; }
 
-        private UnityEvent onPlayerLoaded = new UnityEvent();
-        public static UnityEvent OnPlayerLoaded { get => instance.onPlayerLoaded; }
-
         public static InventorySystem InventorySystem { get; private set; }
         public static ShopSystem ShopSystem { get; private set; }
         public static GoldSystem GoldSystem { get; private set; }
-
-        private ItemPlayFabClient playFabClient;
-
+        
         private void Awake()
         {
             // Enforce singleton
@@ -45,27 +40,10 @@ namespace CloudInventory.Examples.ShopExample
             GoldSystem = GetComponent<GoldSystem>();
         }
 
-        private void Start()
-        {
-            // Initialize playfab
-            if (ItemManager.ClientType == ItemClientType.PlayFabClient)
-            {
-                playFabClient = ItemManager.GetClient<ItemPlayFabClient>();
-                playFabClient.ConnectPlayer("Player" + player, () => OnPlayerLoaded.Invoke());
-            }
-        }
-
         public void SetPlayer(int p)
         {
             player = p;
-            if (playFabClient != null)
-            {
-                playFabClient.ConnectPlayer("Player" + player, () => OnPlayerChanged.Invoke(player));
-            }
-            else
-            {
-                OnPlayerChanged.Invoke(player);
-            }
+            OnPlayerChanged.Invoke(player);
         }
     }
 }
