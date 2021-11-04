@@ -28,15 +28,8 @@ namespace CloudInventory
                     FunctionParameter = new { id = itemIID }
                 }, (result) =>
                 {
-                    Debug.Log("Got item! Finished calling: " + result.FunctionName);
                     JsonObject res = (JsonObject)result.FunctionResult;
-                    List<LogStatement> logs = result.Logs;
-                    foreach (LogStatement log in logs)
-                    {
-                        Debug.Log(log.Message);
-                    }
                     string ret = (string)res["ret"];
-                    Debug.Log(ret);
                     callback(ret);
                 }, (err) =>
                 {
@@ -55,15 +48,8 @@ namespace CloudInventory
                     FunctionParameter = new { playerId = playerIID }
                 }, (result) =>
                 {
-                    Debug.Log("Got items! Finished calling: " + result.FunctionName);
                     JsonObject res = (JsonObject)result.FunctionResult;
-                    List<LogStatement> logs = result.Logs;
-                    foreach (LogStatement log in logs)
-                    {
-                        Debug.Log(log.Message);
-                    }
                     string ret = (string)res["ret"];
-                    Debug.Log(ret);
                     callback(ret);
                 }, (err) =>
                 {
@@ -82,15 +68,8 @@ namespace CloudInventory
                     FunctionParameter = new { playerId = playerIID, type = type }
                 }, (result) =>
                 {
-                    Debug.Log("Got items (by type)! Finished calling: " + result.FunctionName);
                     JsonObject res = (JsonObject)result.FunctionResult;
-                    List<LogStatement> logs = result.Logs;
-                    foreach (LogStatement log in logs)
-                    {
-                        Debug.Log(log.Message);
-                    }
                     string ret = (string)res["ret"];
-                    Debug.Log(ret);
                     callback(ret);
                 }, (err) =>
                 {
@@ -109,15 +88,8 @@ namespace CloudInventory
                     FunctionParameter = new { data = itemJson }
                 }, (result) =>
                 {
-                    Debug.Log("Created item! Finished calling: " + result.FunctionName);
                     JsonObject res = (JsonObject)result.FunctionResult;
-                    List<LogStatement> logs = result.Logs;
-                    foreach (LogStatement log in logs)
-                    {
-                        Debug.Log(log.Message);
-                    }
                     string ret = (string)res["ret"];
-                    Debug.Log("Created item with data: " + ret);
                     callback(ret);
                 }, (err) =>
                 {
@@ -136,15 +108,8 @@ namespace CloudInventory
                     FunctionParameter = new { id = itemIID, data = itemJson }
                 }, (result) =>
                 {
-                    Debug.Log("Updated item! Finished calling: " + result.FunctionName);
                     JsonObject res = (JsonObject)result.FunctionResult;
-                    List<LogStatement> logs = result.Logs;
-                    foreach (LogStatement log in logs)
-                    {
-                        Debug.Log(log.Message);
-                    }
                     string ret = (string)res["ret"];
-                    Debug.Log("Created item with data: " + ret);
                     callback(ret);
                 }, (err) =>
                 {
@@ -163,7 +128,6 @@ namespace CloudInventory
                     FunctionParameter = new { id = itemIID }
                 }, (result) =>
                 {
-                    Debug.Log("Deleted item! Finished calling: " + result.FunctionName);
                     callback("");
                 }, (err) =>
                 {
@@ -182,15 +146,8 @@ namespace CloudInventory
                     FunctionParameter = new { id = itemIID, playerId = playerIID }
                 }, (result) =>
                 {
-                    Debug.Log("Traded item! Finished calling: " + result.FunctionName);
                     JsonObject res = (JsonObject)result.FunctionResult;
-                    List<LogStatement> logs = result.Logs;
-                    foreach (LogStatement log in logs)
-                    {
-                        Debug.Log(log.Message);
-                    }
                     string ret = (string)res["ret"];
-                    Debug.Log(ret);
                     callback(ret);
                 }, (err) =>
                 {
