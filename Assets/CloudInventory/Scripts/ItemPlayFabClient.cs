@@ -1,5 +1,6 @@
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using PlayFab;
@@ -17,7 +18,7 @@ namespace CloudInventory
         private bool isConnecting = false;
         private bool isConnected = false;
 
-        public override void GetItem(int itemIID, ClientJsonCallback callback)
+        public override void GetItem(string itemIID, ClientJsonCallback callback)
         {
             ValidateConnection(() => { });
         }
@@ -84,10 +85,15 @@ namespace CloudInventory
                 {
                     Debug.Log("Created item! Finished calling: " + result.FunctionName);
                     JsonObject res = (JsonObject)result.FunctionResult;
+                    List<LogStatement> logs = result.Logs;
+                    foreach (LogStatement log in logs)
+                    {
+                        Debug.Log(log.Message);
+                    }
                     string id = (string)res["id"];
-                    string data = (string)res["data"];
                     Debug.Log("Created item id: " + id);
-                    Debug.Log("Created item data: " + data);
+                    string pid = (string)res["pid"];
+                    Debug.Log("Created item pid: " + pid);
                     // callback("");
                 }, (err) =>
                 {
@@ -96,17 +102,17 @@ namespace CloudInventory
             });
         }
 
-        public override void UpdateItem(int itemIID, string itemJson, ClientJsonCallback callback)
+        public override void UpdateItem(string itemIID, string itemJson, ClientJsonCallback callback)
         {
             ValidateConnection(() => { });
         }
 
-        public override void DeleteItem(int itemIID, ClientJsonCallback callback)
+        public override void DeleteItem(string itemIID, ClientJsonCallback callback)
         {
             ValidateConnection(() => { });
         }
 
-        public override void TradeItem(int itemIID, string playerIID, ClientJsonCallback callback)
+        public override void TradeItem(string itemIID, string playerIID, ClientJsonCallback callback)
         {
             ValidateConnection(() => { });
         }

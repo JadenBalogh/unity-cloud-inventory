@@ -59,13 +59,13 @@ namespace CloudInventory
         /// Standard method to load an item from the database by ID.
         /// BaseItem is sent to the callback upon retrieval.
         ///</summary>
-        public static void GetItem(int itemIID, GetItemCallback<BaseItem> callback) => GetItem<BaseItem>(itemIID, callback);
+        public static void GetItem(string itemIID, GetItemCallback<BaseItem> callback) => GetItem<BaseItem>(itemIID, callback);
 
         ///<summary>
         /// Generic method to load an item from the database by ID.
         /// BaseItem of specified type is sent to the callback upon retrieval.
         ///</summary>
-        public static void GetItem<T>(int itemIID, GetItemCallback<T> callback) where T : BaseItem
+        public static void GetItem<T>(string itemIID, GetItemCallback<T> callback) where T : BaseItem
         {
             Client.GetItem(itemIID, (json) => callback(instance.DeserializeItem<T>(json)));
         }
@@ -161,13 +161,13 @@ namespace CloudInventory
         ///<summary>
         /// Standard method to delete an item from the database by id.
         ///</summary>
-        public static void DeleteItem(int itemIID) => DeleteItem(itemIID, () => { });
+        public static void DeleteItem(string itemIID) => DeleteItem(itemIID, () => { });
 
         ///<summary>
         /// Standard method to delete an item from the database by id.
         /// Upon successful removal, callback is invoked.
         ///</summary>
-        public static void DeleteItem(int itemIID, ModifyItemCallback callback)
+        public static void DeleteItem(string itemIID, ModifyItemCallback callback)
         {
             Client.DeleteItem(itemIID, (json) => callback());
         }
@@ -175,13 +175,13 @@ namespace CloudInventory
         ///<summary>
         /// Standard method to trade an item in the database by id to a given player.
         ///</summary>
-        public static void TradeItem(int itemIID, string playerIID) => TradeItem(itemIID, playerIID, () => { });
+        public static void TradeItem(string itemIID, string playerIID) => TradeItem(itemIID, playerIID, () => { });
 
         ///<summary>
         /// Standard method to trade an item in the database by id to a given player.
         /// Upon successful trade, callback is invoked.
         ///</summary>
-        public static void TradeItem(int itemIID, string playerIID, ModifyItemCallback callback)
+        public static void TradeItem(string itemIID, string playerIID, ModifyItemCallback callback)
         {
             Client.TradeItem(itemIID, playerIID, (json) => callback());
         }
@@ -260,7 +260,7 @@ namespace CloudInventory
         [System.Serializable]
         private class RawItem
         {
-            public int id;
+            public string id;
             public string player_id;
             public string item_name;
             public int item_type;

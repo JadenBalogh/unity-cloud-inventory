@@ -11,7 +11,7 @@ namespace CloudInventory
 
         private delegate void WebRequestCallback(string json);
 
-        public override void GetItem(int itemIID, ClientJsonCallback callback)
+        public override void GetItem(string itemIID, ClientJsonCallback callback)
         {
             Get($"{serverURL}/get-item?itemId={itemIID}", (json) => callback(json));
         }
@@ -31,17 +31,17 @@ namespace CloudInventory
             Post($"{serverURL}/add-item", itemJson, (json) => callback(json));
         }
 
-        public override void UpdateItem(int itemIID, string itemJson, ClientJsonCallback callback)
+        public override void UpdateItem(string itemIID, string itemJson, ClientJsonCallback callback)
         {
             Post($"{serverURL}/update-item?itemId={itemIID}", itemJson, (json) => callback(json));
         }
 
-        public override void DeleteItem(int itemIID, ClientJsonCallback callback)
+        public override void DeleteItem(string itemIID, ClientJsonCallback callback)
         {
             Get($"{serverURL}/remove-item?itemId={itemIID}", (json) => callback(json));
         }
 
-        public override void TradeItem(int itemIID, string playerIID, ClientJsonCallback callback)
+        public override void TradeItem(string itemIID, string playerIID, ClientJsonCallback callback)
         {
             Get($"{serverURL}/trade-item?itemId={itemIID}&playerId={playerIID}", (json) => callback(json));
         }

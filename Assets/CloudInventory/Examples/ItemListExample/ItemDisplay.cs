@@ -32,7 +32,7 @@ namespace CloudInventory.Examples.ItemListExample
             itemNameInput.text = "";
 
             Item item = new Item();
-            item.IID = 0;
+            item.IID = "0";
             item.PlayerIID = "0";
             item.Name = itemName;
             item.Price = Random.Range(1, 9);

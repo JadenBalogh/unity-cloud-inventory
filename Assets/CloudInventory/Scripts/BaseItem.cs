@@ -2,7 +2,7 @@ namespace CloudInventory
 {
     public class BaseItem
     {
-        public int IID { get; set; }
+        public string IID { get; set; }
         public string PlayerIID { get; set; }
         public string Name { get; set; }
         public int Type { get; set; }
