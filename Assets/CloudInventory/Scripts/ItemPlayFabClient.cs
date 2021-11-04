@@ -55,17 +55,19 @@ namespace CloudInventory
                 PlayFabClientAPI.ExecuteCloudScript(new ExecuteCloudScriptRequest()
                 {
                     FunctionName = "getItems",
-                    FunctionParameter = new { playerId = playerIID }
+                    FunctionParameter = new { playerId = playerIID, type = type }
                 }, (result) =>
                 {
                     Debug.Log("Got items (by type)! Finished calling: " + result.FunctionName);
                     JsonObject res = (JsonObject)result.FunctionResult;
-                    Debug.Log(res["items"]);
-                    // string id = (string)res["id"];
-                    // string data = (string)res["data"];
-                    // Debug.Log("Created item id: " + id);
-                    // Debug.Log("Created item data: " + data);
-                    // callback("");
+                    List<LogStatement> logs = result.Logs;
+                    foreach (LogStatement log in logs)
+                    {
+                        Debug.Log(log.Message);
+                    }
+                    string ret = (string)res["ret"];
+                    Debug.Log(ret);
+                    callback(ret);
                 }, (err) =>
                 {
                     Debug.Log(err.ErrorMessage);
@@ -90,11 +92,9 @@ namespace CloudInventory
                     {
                         Debug.Log(log.Message);
                     }
-                    string id = (string)res["id"];
-                    Debug.Log("Created item id: " + id);
-                    string pid = (string)res["pid"];
-                    Debug.Log("Created item pid: " + pid);
-                    // callback("");
+                    string ret = (string)res["ret"];
+                    Debug.Log("Created item with data: " + ret);
+                    callback(ret);
                 }, (err) =>
                 {
                     Debug.Log(err.ErrorMessage);
