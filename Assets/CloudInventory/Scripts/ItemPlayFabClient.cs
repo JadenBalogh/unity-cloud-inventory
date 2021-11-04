@@ -128,12 +128,48 @@ namespace CloudInventory
 
         public override void UpdateItem(string itemIID, string itemJson, ClientJsonCallback callback)
         {
-            ValidateConnection(() => { });
+            ValidateConnection(() =>
+            {
+                PlayFabClientAPI.ExecuteCloudScript(new ExecuteCloudScriptRequest()
+                {
+                    FunctionName = "updateItem",
+                    FunctionParameter = new { id = itemIID, data = itemJson }
+                }, (result) =>
+                {
+                    Debug.Log("Updated item! Finished calling: " + result.FunctionName);
+                    JsonObject res = (JsonObject)result.FunctionResult;
+                    List<LogStatement> logs = result.Logs;
+                    foreach (LogStatement log in logs)
+                    {
+                        Debug.Log(log.Message);
+                    }
+                    string ret = (string)res["ret"];
+                    Debug.Log("Created item with data: " + ret);
+                    callback(ret);
+                }, (err) =>
+                {
+                    Debug.Log(err.ErrorMessage);
+                });
+            });
         }
 
         public override void DeleteItem(string itemIID, ClientJsonCallback callback)
         {
-            ValidateConnection(() => { });
+            ValidateConnection(() =>
+            {
+                PlayFabClientAPI.ExecuteCloudScript(new ExecuteCloudScriptRequest()
+                {
+                    FunctionName = "deleteItem",
+                    FunctionParameter = new { id = itemIID }
+                }, (result) =>
+                {
+                    Debug.Log("Deleted item! Finished calling: " + result.FunctionName);
+                    callback("");
+                }, (err) =>
+                {
+                    Debug.Log(err.ErrorMessage);
+                });
+            });
         }
 
         public override void TradeItem(string itemIID, string playerIID, ClientJsonCallback callback)
