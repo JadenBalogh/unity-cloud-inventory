@@ -10,7 +10,7 @@ namespace CloudInventory.Examples.ShopExample
 
         public Item() : base() { }
 
-        public Item(int playerIID, string name, int price) : base(playerIID, name, (int)ItemType.Item)
+        public Item(string playerIID, string name, int price) : base(playerIID, name, (int)ItemType.Item)
         {
             Price = price;
         }

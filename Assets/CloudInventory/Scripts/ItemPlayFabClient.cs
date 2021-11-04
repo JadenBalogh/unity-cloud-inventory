@@ -22,7 +22,7 @@ namespace CloudInventory
             ValidateConnection(() => { });
         }
 
-        public override void GetItems(int playerIID, ClientJsonCallback callback)
+        public override void GetItems(string playerIID, ClientJsonCallback callback)
         {
             ValidateConnection(() =>
             {
@@ -47,7 +47,7 @@ namespace CloudInventory
             });
         }
 
-        public override void GetItemsByType(int playerIID, int type, ClientJsonCallback callback)
+        public override void GetItemsByType(string playerIID, int type, ClientJsonCallback callback)
         {
             ValidateConnection(() =>
             {
@@ -106,7 +106,7 @@ namespace CloudInventory
             ValidateConnection(() => { });
         }
 
-        public override void TradeItem(int itemIID, int playerIID, ClientJsonCallback callback)
+        public override void TradeItem(int itemIID, string playerIID, ClientJsonCallback callback)
         {
             ValidateConnection(() => { });
         }

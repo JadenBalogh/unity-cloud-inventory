@@ -74,13 +74,13 @@ namespace CloudInventory
         /// Standard method to load all items from the database for a given player.
         /// Array of BaseItems is sent to the callback upon retrieval.
         ///</summary>
-        public static void GetItems(int playerIID, GetItemsCallback<BaseItem> callback) => GetItems<BaseItem>(playerIID, callback);
+        public static void GetItems(string playerIID, GetItemsCallback<BaseItem> callback) => GetItems<BaseItem>(playerIID, callback);
 
         ///<summary>
         /// Generic method to load all items from the database for a given player.
         /// Array of given BaseItem type is sent to the callback upon retrieval.
         ///</summary>
-        public static void GetItems<T>(int playerIID, GetItemsCallback<T> callback) where T : BaseItem
+        public static void GetItems<T>(string playerIID, GetItemsCallback<T> callback) where T : BaseItem
         {
             Client.GetItems(playerIID, (json) => callback(instance.DeserializeItems<T>(json)));
         }
@@ -89,13 +89,13 @@ namespace CloudInventory
         /// Standard method to load all items from the database for a given player with a given type.
         /// Array of BaseItems is sent to the callback upon retrieval.
         ///</summary>
-        public static void GetItems(int playerIID, int type, GetItemsCallback<BaseItem> callback) => GetItems<BaseItem>(playerIID, type, callback);
+        public static void GetItems(string playerIID, int type, GetItemsCallback<BaseItem> callback) => GetItems<BaseItem>(playerIID, type, callback);
 
         ///<summary>
         /// Generic method to load all items from the database for a given player with a given type.
         /// Array of given BaseItem type is sent to the callback upon retrieval.
         ///</summary>
-        public static void GetItems<T>(int playerIID, int type, GetItemsCallback<T> callback) where T : BaseItem
+        public static void GetItems<T>(string playerIID, int type, GetItemsCallback<T> callback) where T : BaseItem
         {
             Client.GetItemsByType(playerIID, type, (json) => callback(instance.DeserializeItems<T>(json)));
         }
@@ -175,13 +175,13 @@ namespace CloudInventory
         ///<summary>
         /// Standard method to trade an item in the database by id to a given player.
         ///</summary>
-        public static void TradeItem(int itemIID, int playerIID) => TradeItem(itemIID, playerIID, () => { });
+        public static void TradeItem(int itemIID, string playerIID) => TradeItem(itemIID, playerIID, () => { });
 
         ///<summary>
         /// Standard method to trade an item in the database by id to a given player.
         /// Upon successful trade, callback is invoked.
         ///</summary>
-        public static void TradeItem(int itemIID, int playerIID, ModifyItemCallback callback)
+        public static void TradeItem(int itemIID, string playerIID, ModifyItemCallback callback)
         {
             Client.TradeItem(itemIID, playerIID, (json) => callback());
         }
@@ -261,7 +261,7 @@ namespace CloudInventory
         private class RawItem
         {
             public int id;
-            public int player_id;
+            public string player_id;
             public string item_name;
             public int item_type;
             public string item_data;
@@ -270,7 +270,7 @@ namespace CloudInventory
         [System.Serializable]
         private class RawItemData
         {
-            public int playerId;
+            public string playerId;
             public string name;
             public int type;
             public string data;

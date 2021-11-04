@@ -16,12 +16,12 @@ namespace CloudInventory
             Get($"{serverURL}/get-item?itemId={itemIID}", (json) => callback(json));
         }
 
-        public override void GetItems(int playerIID, ClientJsonCallback callback)
+        public override void GetItems(string playerIID, ClientJsonCallback callback)
         {
             Get($"{serverURL}/get-items?playerId={playerIID}", (json) => callback(json));
         }
 
-        public override void GetItemsByType(int playerIID, int type, ClientJsonCallback callback)
+        public override void GetItemsByType(string playerIID, int type, ClientJsonCallback callback)
         {
             Get($"{serverURL}/get-items-by-type?playerId={playerIID}&type={type}", (json) => callback(json));
         }
@@ -41,7 +41,7 @@ namespace CloudInventory
             Get($"{serverURL}/remove-item?itemId={itemIID}", (json) => callback(json));
         }
 
-        public override void TradeItem(int itemIID, int playerIID, ClientJsonCallback callback)
+        public override void TradeItem(int itemIID, string playerIID, ClientJsonCallback callback)
         {
             Get($"{serverURL}/trade-item?itemId={itemIID}&playerId={playerIID}", (json) => callback(json));
         }

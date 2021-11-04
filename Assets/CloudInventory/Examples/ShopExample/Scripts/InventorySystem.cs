@@ -7,12 +7,12 @@ namespace CloudInventory.Examples.ShopExample
 {
     public class InventorySystem : MonoBehaviour
     {
-        private Dictionary<int, UnityEvent<Item[]>> itemsChangedEvents = new Dictionary<int, UnityEvent<Item[]>>();
+        private Dictionary<string, UnityEvent<Item[]>> itemsChangedEvents = new Dictionary<string, UnityEvent<Item[]>>();
 
         private void Awake()
         {
             // Initialize events
-            int[] players = GameManager.PLAYERS;
+            string[] players = GameManager.PLAYERS;
             for (int i = 0; i < players.Length; i++)
             {
                 itemsChangedEvents.Add(players[i], new UnityEvent<Item[]>());
@@ -31,22 +31,22 @@ namespace CloudInventory.Examples.ShopExample
             UpdateInventory(GameManager.Player);
         }
 
-        public void RemoveItemsListener(int player, UnityAction<Item[]> listener)
+        public void RemoveItemsListener(string player, UnityAction<Item[]> listener)
         {
             itemsChangedEvents[player].RemoveListener(listener);
         }
 
-        public void AddItemsListener(int player, UnityAction<Item[]> listener)
+        public void AddItemsListener(string player, UnityAction<Item[]> listener)
         {
             itemsChangedEvents[player].AddListener(listener);
         }
 
-        public void UpdateInventory(int player)
+        public void UpdateInventory(string player)
         {
             ItemManager.GetItems<Item>(player, (int)ItemType.Item, (items) => itemsChangedEvents[player].Invoke(items));
         }
 
-        public void BuyItem(int player, Item item)
+        public void BuyItem(string player, Item item)
         {
             if (GameManager.GoldSystem.CanAfford(player, item.Price))
             {
@@ -64,7 +64,7 @@ namespace CloudInventory.Examples.ShopExample
             }
         }
 
-        public void SellItem(int player, Item item)
+        public void SellItem(string player, Item item)
         {
             if (GameManager.GoldSystem.CanAfford(GameManager.Shop, item.Price))
             {
@@ -82,7 +82,7 @@ namespace CloudInventory.Examples.ShopExample
             }
         }
 
-        public void DeleteItem(int player, Item item)
+        public void DeleteItem(string player, Item item)
         {
             ItemManager.DeleteItem(item.IID, () =>
             {

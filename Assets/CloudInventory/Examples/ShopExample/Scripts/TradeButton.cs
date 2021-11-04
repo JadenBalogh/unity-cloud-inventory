@@ -25,7 +25,7 @@ namespace CloudInventory.Examples.ShopExample
 
         private bool CanAfford(Item item)
         {
-            int player = isTargetShop ? GameManager.Shop : GameManager.Player;
+            string player = isTargetShop ? GameManager.Shop : GameManager.Player;
             return !requireGold || GameManager.GoldSystem.CanAfford(player, item.Price);
         }
     }

@@ -10,7 +10,7 @@ namespace CloudInventory.Examples.ShopExample
 
         public Gold() : base() { }
 
-        public Gold(int playerIID, int amount) : base(playerIID, "Gold", (int)ItemType.Currency)
+        public Gold(string playerIID, int amount) : base(playerIID, "Gold", (int)ItemType.Currency)
         {
             Amount = amount;
         }

@@ -10,7 +10,7 @@ namespace CloudInventory.Examples.ShopExample
         [SerializeField] private bool isShop;
         [SerializeField] private Text goldText;
 
-        private int player;
+        private string player;
 
         private void Start()
         {
@@ -27,9 +27,12 @@ namespace CloudInventory.Examples.ShopExample
             goldText.text = gold.ToString();
         }
 
-        private void UpdatePlayer(int player)
+        private void UpdatePlayer(string player)
         {
-            GameManager.GoldSystem.RemoveGoldListener(this.player, UpdateDisplay);
+            if (this.player != null)
+            {
+                GameManager.GoldSystem.RemoveGoldListener(this.player, UpdateDisplay);
+            }
             GameManager.GoldSystem.AddGoldListener(player, UpdateDisplay);
             if (GameManager.GoldSystem.IsGoldInitialized(player))
             {

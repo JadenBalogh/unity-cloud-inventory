@@ -12,16 +12,16 @@ namespace CloudInventory.Examples.ShopExample
         [SerializeField] private int minQuestGold = 5;
         [SerializeField] private int maxQuestGold = 15;
 
-        private Dictionary<int, bool> isGoldInitialized = new Dictionary<int, bool>();
-        private Dictionary<int, Gold> goldAmounts = new Dictionary<int, Gold>();
-        private Dictionary<int, UnityEvent<int>> goldChangedEvents = new Dictionary<int, UnityEvent<int>>();
+        private Dictionary<string, bool> isGoldInitialized = new Dictionary<string, bool>();
+        private Dictionary<string, Gold> goldAmounts = new Dictionary<string, Gold>();
+        private Dictionary<string, UnityEvent<int>> goldChangedEvents = new Dictionary<string, UnityEvent<int>>();
 
         private void Awake()
         {
-            int[] players = GameManager.PLAYERS;
+            string[] players = GameManager.PLAYERS;
             for (int i = 0; i < players.Length; i++)
             {
-                int player = players[i];
+                string player = players[i];
 
                 // Initialize events
                 isGoldInitialized.Add(player, false);
@@ -53,34 +53,34 @@ namespace CloudInventory.Examples.ShopExample
             }
         }
 
-        public void RemoveGoldListener(int player, UnityAction<int> listener)
+        public void RemoveGoldListener(string player, UnityAction<int> listener)
         {
             goldChangedEvents[player].RemoveListener(listener);
         }
 
-        public void AddGoldListener(int player, UnityAction<int> listener)
+        public void AddGoldListener(string player, UnityAction<int> listener)
         {
             goldChangedEvents[player].AddListener(listener);
         }
 
-        public bool IsGoldInitialized(int player)
+        public bool IsGoldInitialized(string player)
         {
             return isGoldInitialized[player];
         }
 
-        public bool CanAfford(int player, int price)
+        public bool CanAfford(string player, int price)
         {
             return goldAmounts[player].Amount >= price;
         }
 
-        public void SpendGold(int player, int amount)
+        public void SpendGold(string player, int amount)
         {
             goldAmounts[player].Amount -= amount;
             goldChangedEvents[player].Invoke(goldAmounts[player].Amount);
             ItemManager.UpdateItem(goldAmounts[player]);
         }
 
-        public void AddGold(int player, int amount)
+        public void AddGold(string player, int amount)
         {
             goldAmounts[player].Amount += amount;
             goldChangedEvents[player].Invoke(goldAmounts[player].Amount);
@@ -93,7 +93,7 @@ namespace CloudInventory.Examples.ShopExample
             AddGold(GameManager.Player, Random.Range(minQuestGold, maxQuestGold));
         }
 
-        public int GetGold(int player)
+        public int GetGold(string player)
         {
             return goldAmounts[player].Amount;
         }

@@ -9,21 +9,21 @@ namespace CloudInventory.Examples.ShopExample
     {
         private static GameManager instance;
 
-        public static readonly int[] PLAYERS = new int[4] { -1, 0, 1, 2 };
+        public static readonly string[] PLAYERS = new string[4] { "Shop", "Player1", "Player2", "Player3" };
 
-        private int player = 0;
-        public static int Player { get => instance.player; }
+        private string player = "Player1";
+        public static string Player { get => instance.player; }
 
-        private const int SHOP_IID = -1;
-        public static int Shop { get => SHOP_IID; }
+        private const string SHOP_IID = "Shop";
+        public static string Shop { get => SHOP_IID; }
 
-        private UnityEvent<int> onPlayerChanged = new UnityEvent<int>();
-        public static UnityEvent<int> OnPlayerChanged { get => instance.onPlayerChanged; }
+        private UnityEvent<string> onPlayerChanged = new UnityEvent<string>();
+        public static UnityEvent<string> OnPlayerChanged { get => instance.onPlayerChanged; }
 
         public static InventorySystem InventorySystem { get; private set; }
         public static ShopSystem ShopSystem { get; private set; }
         public static GoldSystem GoldSystem { get; private set; }
-        
+
         private void Awake()
         {
             // Enforce singleton
@@ -42,7 +42,7 @@ namespace CloudInventory.Examples.ShopExample
 
         public void SetPlayer(int p)
         {
-            player = p;
+            player = PLAYERS[p + 1];
             OnPlayerChanged.Invoke(player);
         }
     }

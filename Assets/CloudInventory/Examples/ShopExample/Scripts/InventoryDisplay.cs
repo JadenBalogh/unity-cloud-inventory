@@ -13,7 +13,7 @@ namespace CloudInventory.Examples.ShopExample
         [SerializeField] private ItemDisplay itemDisplayPrefab;
         [SerializeField] private UnityEvent<Item> onSelectionChanged;
 
-        private int player;
+        private string player;
         private ItemDisplay selectedDisplay;
         private List<ItemDisplay> itemDisplays = new List<ItemDisplay>();
 
@@ -92,9 +92,12 @@ namespace CloudInventory.Examples.ShopExample
             onSelectionChanged.Invoke(item);
         }
 
-        private void UpdatePlayer(int player)
+        private void UpdatePlayer(string player)
         {
-            GameManager.InventorySystem.RemoveItemsListener(this.player, UpdateDisplay);
+            if (this.player != null)
+            {
+                GameManager.InventorySystem.RemoveItemsListener(this.player, UpdateDisplay);
+            }
             GameManager.InventorySystem.AddItemsListener(player, UpdateDisplay);
             this.player = player;
         }
