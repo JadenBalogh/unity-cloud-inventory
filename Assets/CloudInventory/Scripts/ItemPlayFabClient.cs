@@ -1,8 +1,5 @@
-using System.Text;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 using PlayFab;
 using PlayFab.ClientModels;
 using PlayFab.Json;
