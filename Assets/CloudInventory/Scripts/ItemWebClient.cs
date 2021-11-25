@@ -7,9 +7,9 @@ namespace CloudInventory
 {
     public class ItemWebClient : BaseItemClient
     {
-        [SerializeField] private string serverURL = "https://unity-cloud-inventory-server.herokuapp.com";
+        [SerializeField] protected string serverURL = "https://unity-cloud-inventory-server.herokuapp.com";
 
-        private delegate void WebRequestCallback(string json);
+        protected delegate void WebRequestCallback(string json);
 
         public override void GetItem(string itemIID, ClientJsonCallback callback)
         {
@@ -46,7 +46,7 @@ namespace CloudInventory
             Get($"{serverURL}/trade-item?itemId={itemIID}&playerId={playerIID}", (json) => callback(json));
         }
 
-        private void Get(string uri, WebRequestCallback callback = null) => StartCoroutine(GetAsync(uri, callback));
+        protected void Get(string uri, WebRequestCallback callback = null) => StartCoroutine(GetAsync(uri, callback));
 
         private IEnumerator GetAsync(string uri, WebRequestCallback callback = null)
         {
@@ -74,7 +74,7 @@ namespace CloudInventory
             }
         }
 
-        private void Post(string uri, string body, WebRequestCallback callback = null) => StartCoroutine(PostAsync(uri, body, callback));
+        protected void Post(string uri, string body, WebRequestCallback callback = null) => StartCoroutine(PostAsync(uri, body, callback));
 
         private IEnumerator PostAsync(string uri, string body, WebRequestCallback callback = null)
         {
