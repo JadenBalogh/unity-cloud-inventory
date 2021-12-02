@@ -13,7 +13,7 @@ namespace CloudInventory
 
         public override void GetItems(string playerIID, ClientJsonCallback callback)
         {
-
+            Get($"{serverURL}/GetItems?playerId={playerIID}", (json) => callback(json));
         }
 
         public override void GetItemsByType(string playerIID, int type, ClientJsonCallback callback)
@@ -23,10 +23,7 @@ namespace CloudInventory
 
         public override void CreateItem(string itemJson, ClientJsonCallback callback)
         {
-            HelloWorldData data = new HelloWorldData();
-            data.firstName = "Jimmy";
-            data.lastName = "Jims";
-            Post(serverURL, JsonUtility.ToJson(data), (json) => Debug.Log(json));
+            Post(serverURL, itemJson, (json) => callback(json));
         }
 
         public override void UpdateItem(string itemIID, string itemJson, ClientJsonCallback callback)
@@ -42,12 +39,6 @@ namespace CloudInventory
         public override void TradeItem(string itemIID, string playerIID, ClientJsonCallback callback)
         {
 
-        }
-
-        private class HelloWorldData
-        {
-            public string firstName;
-            public string lastName;
         }
     }
 }
